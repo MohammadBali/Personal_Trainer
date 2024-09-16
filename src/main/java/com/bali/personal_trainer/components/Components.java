@@ -61,7 +61,7 @@ public class Components
      * **/
     public static Object userToBeReturned(User user, String tokenValue, String... excludedFields)
     {
-        return excludedFields != null
+        return excludedFields.length != 0
             ?mapObjectWithoutFields(user, tokenValue!=null? Map.of("token",tokenValue) : null,excludedFields)
             :mapObjectWithoutFields(user, tokenValue!=null? Map.of("token",tokenValue) : null,"tokens","password");
     }

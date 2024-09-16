@@ -3,9 +3,11 @@ package com.bali.personal_trainer.controllers;
 import com.bali.personal_trainer.components.Components;
 import com.bali.personal_trainer.models.Entities.User;
 import com.bali.personal_trainer.services.UserService.UserService;
+import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.object.SqlQuery;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;

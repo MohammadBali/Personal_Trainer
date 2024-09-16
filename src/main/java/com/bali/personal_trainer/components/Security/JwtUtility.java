@@ -22,7 +22,7 @@ public class JwtUtility {
     {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", user.getRole().getName());  // Include the user's role in the token
-
+        claims.put("id", user.getId());
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(String.valueOf(user.getId()))

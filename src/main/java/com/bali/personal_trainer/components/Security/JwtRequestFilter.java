@@ -31,6 +31,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
 
+
         final String authorizationHeader = request.getHeader("Authorization");
 
         String userId = null;
@@ -47,7 +48,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null)
         {
             UserDetails userDetails = (UserDetails) userService.get(Integer.parseInt(userId));
-
             if (jwtUtility.validateToken(jwt, userId))
             {
                 // Extract role from the JWT
