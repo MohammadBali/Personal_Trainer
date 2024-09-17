@@ -1,8 +1,6 @@
 package com.bali.personal_trainer.controllers;
 
-import com.bali.personal_trainer.components.Components;
 import com.bali.personal_trainer.models.Entities.Category;
-import com.bali.personal_trainer.models.Entities.User;
 import com.bali.personal_trainer.services.CategoryService.CategoryService;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
