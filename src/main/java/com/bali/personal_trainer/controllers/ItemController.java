@@ -1,10 +1,13 @@
 package com.bali.personal_trainer.controllers;
 
 import com.bali.personal_trainer.models.Entities.Item;
-import com.bali.personal_trainer.repositories.ItemRepository;
 import com.bali.personal_trainer.services.ItemService.ItemService;
+import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,15 +21,31 @@ public class ItemController
     private ItemService itemService;
 
     @PostMapping("/add")
-    public ResponseEntity<?> addItem(@RequestBody Item item)
+    public ResponseEntity<?> addItem(@Valid @RequestBody Item item, BindingResult bindingResult)
     {
         try
         {
+            if(bindingResult.hasErrors())
+            {
+                // Collect all validation errors into a list
+                List<String> errors = bindingResult.getAllErrors().stream()
+                        .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                        .toList();
+
+                throw new ValidationException(errors.toString());
+            }
+
             return ResponseEntity.ok().body(itemService.addItem(item));
         }
+
+        catch (ValidationException error)
+        {
+            return ResponseEntity.status(500).body(Map.of("error","Validation Error while adding item", "message", error.getMessage()));
+        }
+
         catch (Exception e)
         {
-            return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(500).body(Map.of("error", "Error while adding item", "message", e.getMessage()));
         }
     }
 

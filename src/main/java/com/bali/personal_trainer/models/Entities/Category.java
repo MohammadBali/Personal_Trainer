@@ -1,5 +1,6 @@
 package com.bali.personal_trainer.models.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -21,7 +22,7 @@ public class Category {
 //    @NotBlank(message = "name cannot be null")
     private String name;
 
-    @OneToMany(mappedBy = "categoryId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "categoryId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference("category_items")
     private Collection<Item> items = new ArrayList<>();
 

@@ -57,14 +57,7 @@ public class CategoryController
         {
             Collection<Category> c= categoryService.findAll();
 
-            ArrayList<Object> list = new ArrayList<>();
-
-            for(Category cat : c)
-            {
-                list.add(cat);
-            }
-
-            return ResponseEntity.ok(Map.of("categories",list));
+            return ResponseEntity.ok(Map.of("categories",c));
         }
         catch (Exception e)
         {

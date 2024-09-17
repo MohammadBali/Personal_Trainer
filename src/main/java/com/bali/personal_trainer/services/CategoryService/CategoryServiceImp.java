@@ -33,6 +33,7 @@ public class CategoryServiceImp implements CategoryService
 
     @Override
     public Collection<Category> findAll() {
+        Collection<Category> categories = categoryRepository.findAll();
         return categoryRepository.findAll();
     }
 }

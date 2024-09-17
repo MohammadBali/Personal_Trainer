@@ -2,8 +2,12 @@ package com.bali.personal_trainer.models.Entities;
 
 import com.bali.personal_trainer.models.ManyToMany.ItemTransaction;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,20 +21,26 @@ public class Item {
     @Column(name="ID")
     private int id;
 
-    @Column(name="name")
+    @Column(name="name", unique = true)
+    @NotBlank(message = "name cannot be nullable")
     private String name;
 
     @Column(name="price")
+    @NotNull(message = "price cannot be nullable")
+    @Min(value = 0, message = "price value cannot be lower than 0")
     private double price;
 
     @ManyToOne @JoinColumn(name="categoryId") @JsonBackReference("category_items")
+    @NotNull(message = "categoryId cannot be nullable")
     private Category categoryId;
 
     @ManyToOne @JoinColumn(name = "unitType") @JsonBackReference("type_items")
+    @NotNull(message = "unitType cannot be nullable")
     private Type unitType;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference("items_transactions")
+    @JsonIgnore
     private Collection<ItemTransaction> itemTransactions = new ArrayList<>();
 
     public int getId() {

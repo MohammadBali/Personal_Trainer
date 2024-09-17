@@ -102,6 +102,21 @@ public class UserServiceImp implements UserService{
         return null; // Invalid credentials
     }
 
+    @Override
+    public User updateUser(int id, User user)
+    {
+
+        User u = userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("User not found with id to be patched: " + id));
+        User updatedUser = Components.copyNonNullElements(user,u);
+
+        if(updatedUser ==null)
+        {
+            throw new RuntimeException("Couldn't patch user with id: " + id);
+        }
+
+        return userRepository.save(updatedUser);
+    }
+
 
 //    /**Generate a Token for User **/
 //    public String generateUserToken(User user)

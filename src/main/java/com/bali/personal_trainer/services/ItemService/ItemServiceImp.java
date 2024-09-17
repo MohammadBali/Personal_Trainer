@@ -2,6 +2,7 @@ package com.bali.personal_trainer.services.ItemService;
 
 import com.bali.personal_trainer.models.Entities.Item;
 import com.bali.personal_trainer.repositories.ItemRepository;
+import com.bali.personal_trainer.services.CategoryService.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Named;
@@ -13,6 +14,9 @@ public class ItemServiceImp implements ItemService
 {
     @Autowired
     private ItemRepository itemRepository;
+
+    @Autowired
+    private CategoryService categoryService;
 
     @Override
     public Item findById(int id) {
@@ -49,6 +53,8 @@ public class ItemServiceImp implements ItemService
     @Override
     public Object addItem(Item item)
     {
+        System.out.println(item.toString());
+        //Category category = categoryService.findById(item.getCategoryId().getId());
         return itemRepository.save(item);
     }
 }

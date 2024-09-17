@@ -10,9 +10,12 @@ import jakarta.validation.ValidationException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.object.SqlQuery;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -115,7 +118,6 @@ public class UserController
         }
     }
 
-
     @GetMapping("/find/email")
     public ResponseEntity<?> getByEmail(@RequestBody Map<String, Object> body)
     {
@@ -129,6 +131,30 @@ public class UserController
         catch (Exception e)
         {
           return ResponseEntity.status(500).body(Map.of("error","Error while getting by email", "message",e.getMessage()));
+        }
+    }
+
+
+    @PatchMapping("/patch/id")
+    public ResponseEntity<?> patchById(@RequestBody User user)
+    {
+        try
+        {
+            if(user.getRole() !=null)
+            {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error","Error while patching user", "message","Unallowed field (Role) was used"));
+            }
+
+            // Extract the authenticated user's ID from the token
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            int userId = Integer.parseInt(authentication.getName());
+            user.setId(userId);
+
+            return ResponseEntity.ok(Components.userToBeReturned(userService.updateUser(userId, user), null));
+        }
+        catch (Exception e)
+        {
+            return ResponseEntity.status(500).body(Map.of("error","Error while patching user", "message",e.getMessage()));
         }
     }
 }

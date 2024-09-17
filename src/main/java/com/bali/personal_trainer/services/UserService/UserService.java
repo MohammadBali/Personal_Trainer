@@ -16,6 +16,7 @@ public interface UserService {
 
     Object authenticateUser(String email, String password);
 
+    User updateUser(int id, User user);
 
 
 }

@@ -65,4 +65,23 @@ public class Components
             ?mapObjectWithoutFields(user, tokenValue!=null? Map.of("token",tokenValue) : null,excludedFields)
             :mapObjectWithoutFields(user, tokenValue!=null? Map.of("token",tokenValue) : null,"tokens","password");
     }
+
+    /**Copies Non-Null values from source to target **/
+    public static <T> T copyNonNullElements(Object source, T target) {
+        // Iterate over all the fields in the source object
+        for (Field field : source.getClass().getDeclaredFields())
+        {
+            try
+            {
+                field.setAccessible(true); // To access private fields
+                Object value = field.get(source);
+                // Only copy properties that are not null
+                if (value != null)
+                {
+                    field.set(target, value);
+                }
+            } catch (IllegalAccessException e) {return null;}
+        }
+        return target;
+    }
 }
