@@ -28,15 +28,15 @@ public class User implements UserDetails {
     @Column(name="ID")
     private int id;
 
-    @NotNull(message = "First Name must not be blank")
+    @NotBlank(message = "First Name must not be blank")
     @Column(name = "firstName")
     private String firstName;
 
-    @NotNull(message = "Last Name must not be blank")
+    @NotBlank(message = "Last Name must not be blank")
     @Column(name = "lastName")
     private String lastName;
 
-    @NotNull(message = "First Name must not be blank") @Email(message = "Email should be valid")
+    @NotBlank(message = "First Name must not be blank") @Email(message = "Email should be valid")
     @Column(name = "email", unique = true)
     private String email;
 

@@ -16,6 +16,12 @@ public class CategoryServiceImp implements CategoryService
     private CategoryRepository categoryRepository;
 
     @Override
+    public Category save(Category category) {
+        System.out.println(category.toString());
+        return categoryRepository.save(category);
+    }
+
+    @Override
     public Category findById(int id) {
         return categoryRepository.findById(id).orElseThrow(()-> new NoSuchElementException("Category not found with id: " + id));
     }

@@ -9,6 +9,8 @@ import java.util.Collection;
 
 public interface CategoryService
 {
+    Category save(Category category);
+
     Category findById(int id);
 
     Category findByName(String name);

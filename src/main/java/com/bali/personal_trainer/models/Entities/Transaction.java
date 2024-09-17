@@ -37,5 +37,72 @@ public class Transaction {
     @JsonManagedReference("transactions_items")
     private Collection<ItemTransaction> itemTransactions = new ArrayList<>();
 
+    public int getId() {
+        return id;
+    }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public User getUserId() {
+        return userId;
+    }
+
+    public void setUserId(User userId) {
+        this.userId = userId;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public boolean isRecurring() {
+        return isRecurring;
+    }
+
+    public void setRecurring(boolean recurring) {
+        isRecurring = recurring;
+    }
+
+    public String getRecurrenceInterval() {
+        return recurrenceInterval;
+    }
+
+    public void setRecurrenceInterval(String recurrenceInterval) {
+        this.recurrenceInterval = recurrenceInterval;
+    }
+
+    public Date getNextOccurrence() {
+        return nextOccurrence;
+    }
+
+    public void setNextOccurrence(Date nextOccurrence) {
+        this.nextOccurrence = nextOccurrence;
+    }
+
+    public Collection<ItemTransaction> getItemTransactions() {
+        return itemTransactions;
+    }
+
+    public void setItemTransactions(Collection<ItemTransaction> itemTransactions) {
+        this.itemTransactions = itemTransactions;
+    }
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", totalPrice=" + totalPrice +
+                ", isRecurring=" + isRecurring +
+                ", recurrenceInterval='" + recurrenceInterval + '\'' +
+                ", nextOccurrence=" + nextOccurrence +
+                ", itemTransactions=" + itemTransactions +
+                '}';
+    }
 }
