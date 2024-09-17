@@ -1,6 +1,7 @@
 package com.bali.personal_trainer.models.Entities;
 
-import com.bali.personal_trainer.models.ItemTransaction;
+import com.bali.personal_trainer.models.ManyToMany.ItemTransaction;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -17,7 +18,7 @@ public class Transaction {
     @Column(name="ID")
     private int id;
 
-    @ManyToOne @JoinColumn(name = "userId")
+    @ManyToOne @JoinColumn(name = "userId") @JsonBackReference("user_transactions")
     private User userId;
 
     @Column(name = "totalPrice")
@@ -33,7 +34,7 @@ public class Transaction {
     private Date nextOccurrence;
 
     @OneToMany(mappedBy = "transaction", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonManagedReference("transactions_items")
     private Collection<ItemTransaction> itemTransactions = new ArrayList<>();
 
 

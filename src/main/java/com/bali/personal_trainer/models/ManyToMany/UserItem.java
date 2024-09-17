@@ -2,6 +2,7 @@ package com.bali.personal_trainer.models.ManyToMany;
 
 import com.bali.personal_trainer.models.Entities.Item;
 import com.bali.personal_trainer.models.Entities.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -15,12 +16,10 @@ public class UserItem {
     @Column(name="ID")
     private int id;
 
-    @ManyToOne
-    @JoinColumn(name = "userID")
+    @ManyToOne @JoinColumn(name = "userID") @JsonBackReference("user_items")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "itemID")
+    @ManyToOne @JoinColumn(name = "itemID") @JsonBackReference
     private Item item;
 
     @Column(name = "limit")

@@ -1,4 +1,4 @@
-package com.bali.personal_trainer.components.Security;
+package com.bali.personal_trainer.components.Security.JwtHandlers;
 
 import com.bali.personal_trainer.models.Entities.User;
 import io.jsonwebtoken.Jwts;

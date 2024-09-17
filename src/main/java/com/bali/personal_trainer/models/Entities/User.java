@@ -4,11 +4,14 @@ import com.bali.personal_trainer.models.ManyToMany.UserItem;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -17,6 +20,7 @@ import java.util.Collections;
 
 @Table(name = "user")
 @Entity
+@Validated
 public class User implements UserDetails {
 
     @Id
@@ -24,15 +28,19 @@ public class User implements UserDetails {
     @Column(name="ID")
     private int id;
 
+    @NotNull(message = "First Name must not be blank")
     @Column(name = "firstName")
     private String firstName;
 
+    @NotNull(message = "Last Name must not be blank")
     @Column(name = "lastName")
     private String lastName;
 
-    @Column(name = "email")
+    @NotNull(message = "First Name must not be blank") @Email(message = "Email should be valid")
+    @Column(name = "email", unique = true)
     private String email;
 
+    @Size(min = 7, message = "Password must be longer than 7 digits")
     @Column(name = "password")
     private String password;
 
@@ -47,18 +55,21 @@ public class User implements UserDetails {
     @Column(name = "updatedAt")
     private Date updatedAt;
 
-    @ManyToOne @JoinColumn(name = "role") @JsonBackReference
+    @ManyToOne @JoinColumn(name = "role") @JsonBackReference("role_users")
+    @ColumnDefault("2")
     private Role role;
 
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference("user_transactions")
     Collection<Transaction> transactions= new ArrayList<>();
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonManagedReference
+    @JsonManagedReference("user_tokens")
     Collection<Token> tokens= new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference("user_items")
     private Collection<UserItem> userItems = new ArrayList<>();
 
 
@@ -145,10 +156,6 @@ public class User implements UserDetails {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public Date getUpdatedAt() {
         return updatedAt;
     }
@@ -188,7 +195,6 @@ public class User implements UserDetails {
     public void setRole(Role role) {
         this.role = role;
     }
-
 
     @Override
     public String toString() {

@@ -1,6 +1,6 @@
 package com.bali.personal_trainer.models.Entities;
 
-import com.bali.personal_trainer.models.ItemTransaction;
+import com.bali.personal_trainer.models.ManyToMany.ItemTransaction;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -23,13 +23,13 @@ public class Item {
     @Column(name="price")
     private double price;
 
-    @ManyToOne @JoinColumn(name="categoryId") @JsonBackReference
+    @ManyToOne @JoinColumn(name="categoryId") @JsonBackReference("category_items")
     private Category categoryId;
 
-    @ManyToOne @JoinColumn(name = "unitType") @JsonBackReference
+    @ManyToOne @JoinColumn(name = "unitType") @JsonBackReference("type_items")
     private Type unitType;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonManagedReference("items_transactions")
     private Collection<ItemTransaction> itemTransactions = new ArrayList<>();
 }

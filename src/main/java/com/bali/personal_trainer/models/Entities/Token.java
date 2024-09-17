@@ -15,7 +15,7 @@ public class Token {
     @Column(name = "token")
     private String token;
 
-    @ManyToOne @JoinColumn(name = "userId") @JsonBackReference
+    @ManyToOne @JoinColumn(name = "userId") @JsonBackReference("user_tokens")
     private User userId;
 
     public int getId() {

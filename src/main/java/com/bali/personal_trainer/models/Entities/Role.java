@@ -11,6 +11,11 @@ import java.util.Collection;
 @Entity
 public class Role {
 
+    public Role()
+    {
+        super();
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="ID")
@@ -21,7 +26,7 @@ public class Role {
 
     @JsonIgnore // This will prevent the users list from being included in the JSON response
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonManagedReference("role_users")
     private Collection<User> users = new ArrayList<>();
 
     public int getId() {

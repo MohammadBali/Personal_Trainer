@@ -11,7 +11,7 @@ CREATE TABLE `item`
 (
     `ID`         int          NOT NULL AUTO_INCREMENT,
     `name`       varchar(100) NOT NULL,
-    `price`      double       NOT NULL,
+    `price` double NOT NULL,
     `categoryID` int DEFAULT NULL,
     `unitType`   int          NOT NULL,
     PRIMARY KEY (`ID`),
@@ -41,7 +41,7 @@ CREATE TABLE `transaction`
 (
     `ID`                 int NOT NULL AUTO_INCREMENT,
     `userID`             int         DEFAULT NULL,
-    `totalPrice`         double      DEFAULT NULL,
+    `totalPrice` double DEFAULT NULL,
     `isRecurring`        tinyint(1) DEFAULT '0',
     `recurrenceInterval` varchar(20) DEFAULT NULL,
     `nextOccurrence`     datetime    DEFAULT NULL,
@@ -51,6 +51,7 @@ CREATE TABLE `transaction`
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
+-- personaltrainer.`user` definition
 
 CREATE TABLE `user`
 (
@@ -59,10 +60,10 @@ CREATE TABLE `user`
     `lastName`  varchar(255) DEFAULT NULL,
     `email`     varchar(255) DEFAULT NULL,
     `password`  varchar(255) DEFAULT NULL,
-    `income`    double       DEFAULT NULL,
+    `income` double DEFAULT NULL,
     `updatedAt` date         DEFAULT NULL,
     `createdAt` date         DEFAULT NULL,
-    `role`      int          DEFAULT NULL,
+    `role`      int          DEFAULT '2',
     PRIMARY KEY (`ID`),
     UNIQUE KEY `User_unique` (`email`),
     KEY         `user_role2_FK` (`role`),
@@ -100,7 +101,7 @@ CREATE TABLE `user_item`
     `itemID` int      DEFAULT NULL,
     `limit`  int      DEFAULT NULL,
     `date`   datetime DEFAULT NULL,
-    `amount` double   DEFAULT NULL,
+    `amount` double DEFAULT NULL,
     PRIMARY KEY (`ID`),
     KEY      `user_item_item_FK` (`itemID`),
     KEY      `user_item_user_FK` (`userID`),
@@ -113,14 +114,14 @@ CREATE TABLE `user_item`
 
 CREATE TABLE `item_transaction`
 (
-    `ID`             int    NOT NULL AUTO_INCREMENT,
-    `transactionID`  int    DEFAULT NULL,
-    `itemID`         int    DEFAULT NULL,
+    `ID`            int NOT NULL AUTO_INCREMENT,
+    `transactionID` int DEFAULT NULL,
+    `itemID`        int DEFAULT NULL,
     `totalUnitPrice` double DEFAULT NULL,
-    `quantity`       double NOT NULL,
+    `quantity` double NOT NULL,
     PRIMARY KEY (`ID`),
-    KEY              `item_transaction_item_FK` (`itemID`),
-    KEY              `item_transaction_transaction_FK` (`transactionID`),
+    KEY             `item_transaction_item_FK` (`itemID`),
+    KEY             `item_transaction_transaction_FK` (`transactionID`),
     CONSTRAINT `item_transaction_item_FK` FOREIGN KEY (`itemID`) REFERENCES `item` (`ID`),
     CONSTRAINT `item_transaction_transaction_FK` FOREIGN KEY (`transactionID`) REFERENCES `transaction` (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

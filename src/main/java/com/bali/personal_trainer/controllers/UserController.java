@@ -5,12 +5,23 @@ import com.bali.personal_trainer.models.Entities.User;
 import com.bali.personal_trainer.services.UserService.UserService;
 import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.object.SqlQuery;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.rmi.UnexpectedException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/user")
@@ -21,17 +32,40 @@ public class UserController
 
     @Transactional(Transactional.TxType.REQUIRED)
     @PostMapping("/signUp")
-    public ResponseEntity<?> registerUser(@RequestBody User user)
+    public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult bindingResult)
     {
         try
         {
+            if(bindingResult.hasErrors())
+            {
+                // Collect all validation errors into a list
+                List<String> errors = bindingResult.getAllErrors().stream()
+                        .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                        .toList();
+
+                throw new ValidationException(errors.toString());
+            }
+
             Object data = userService.registerUser(user);
             return ResponseEntity.ok(data);
         }
-        catch (Exception e)
+
+        catch (ValidationException error)
         {
-            return ResponseEntity.status(500).body(Map.of("error","Error while signing up", "message", e.getMessage()));
+            return ResponseEntity.status(500).body(Map.of("error","Validation Error while signing up", "message", error.getMessage()));
         }
+
+        catch (ConstraintViolationException e)
+        {
+            return ResponseEntity.status(500).body(Map.of("error","Error while signing up, constraint violation error", "message", e.getMessage()));
+        }
+
+//        catch (Exception e)
+//        {
+//            return ResponseEntity.status(500).body(Map.of("error","Error while signing up", "message", e.getMessage()));
+//        }
+
+
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
@@ -53,7 +87,7 @@ public class UserController
                 return ResponseEntity.status(401).body(Map.of("error","Invalid credentials"));
             }
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
             return ResponseEntity.status(500).body(Map.of("error","Error while logging in", "message", e.getMessage()));
         }

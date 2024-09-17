@@ -1,10 +1,12 @@
 package com.bali.personal_trainer.services.UserService;
 
 import com.bali.personal_trainer.components.Components;
-import com.bali.personal_trainer.components.Security.JwtUtility;
+import com.bali.personal_trainer.components.Security.JwtHandlers.JwtUtility;
+import com.bali.personal_trainer.models.Entities.Role;
 import com.bali.personal_trainer.models.Entities.Token;
 import com.bali.personal_trainer.models.Entities.User;
 import com.bali.personal_trainer.repositories.UserRepository;
+import com.bali.personal_trainer.services.RoleService.RoleService;
 import com.bali.personal_trainer.services.TokenService.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.inject.Named;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -21,6 +22,9 @@ public class UserServiceImp implements UserService{
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RoleService roleService;
 
     @Autowired
     private JwtUtility jwtUtility;
@@ -58,6 +62,11 @@ public class UserServiceImp implements UserService{
     {
         user.setPassword(passwordEncoder.encode(user.getPassword())); // Hash the password
 
+        if (user.getRole() == null) {
+            Role defaultRole = roleService.findById(2);
+            user.setRole(defaultRole);
+        }
+
         String tokenValue = jwtUtility.generateToken(user);
 
         User u = userRepository.save(user);
@@ -93,16 +102,11 @@ public class UserServiceImp implements UserService{
         return null; // Invalid credentials
     }
 
-    /**Authenticate a user via token**/
-    public void authenticateUser(String token)
-    {
-        //Todo
-    }
 
-    /**Generate a Token for User **/
-    public String generateUserToken(User user)
-    {
-        return jwtUtility.generateToken(user);
-    }
+//    /**Generate a Token for User **/
+//    public String generateUserToken(User user)
+//    {
+//        return jwtUtility.generateToken(user);
+//    }
 
 }

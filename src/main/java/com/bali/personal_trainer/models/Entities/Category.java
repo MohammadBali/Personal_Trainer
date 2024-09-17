@@ -19,6 +19,6 @@ public class Category {
     private String name;
 
     @OneToMany(mappedBy = "categoryId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonManagedReference
+    @JsonManagedReference("category_items")
     private Collection<Item> items = new ArrayList<>();
 }

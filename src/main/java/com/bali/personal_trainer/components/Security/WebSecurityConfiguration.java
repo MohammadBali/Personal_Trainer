@@ -1,5 +1,8 @@
 package com.bali.personal_trainer.components.Security;
 import com.bali.personal_trainer.components.Constants;
+import com.bali.personal_trainer.components.Security.Handlers.CustomAccessDeniedHandler;
+import com.bali.personal_trainer.components.Security.Handlers.CustomAuthenticationEntryPoint;
+import com.bali.personal_trainer.components.Security.JwtHandlers.JwtRequestFilter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -22,14 +25,19 @@ public class WebSecurityConfiguration {
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
 
-
-    private final CustomAccessDeniedHandler  customAccessDeniedHandler;
+    @Autowired
+    private CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Autowired
-    public WebSecurityConfiguration(CustomAccessDeniedHandler customAccessDeniedHandler)
-    {
-        this.customAccessDeniedHandler = customAccessDeniedHandler;
-    }
+    private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+//    @Autowired
+//    public WebSecurityConfiguration(CustomAccessDeniedHandler customAccessDeniedHandler)
+//    {
+//        this.customAccessDeniedHandler = customAccessDeniedHandler;
+//        this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
+//    }
+
 
     List<String> allowedRequests = Constants.noAuthenticationRequests;
     List<String> adminRequests = Constants.adminAuthenticationRequests;
@@ -62,7 +70,9 @@ public class WebSecurityConfiguration {
                 )
 
                 .exceptionHandling(exceptions -> exceptions
-                        .accessDeniedHandler(customAccessDeniedHandler) // Set the access denied point
+                        .accessDeniedHandler(customAccessDeniedHandler) // Handle access denied for authorized users (wrong roles)
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)  // Handle unauthorized access
+
                 )
 
                 .sessionManagement(sess ->sess
