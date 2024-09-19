@@ -38,7 +38,7 @@ public class UserServiceImp implements UserService{
 
     /**Get a Single User by ID **/
     @Override
-    public User get(int id)
+    public User getUser(int id)
     {
         return userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("User not found with id: " + id));
     }
@@ -55,6 +55,12 @@ public class UserServiceImp implements UserService{
     public User getUserByEmail(String email)
     {
         return userRepository.findByEmail(email).orElseThrow(() -> new NoSuchElementException("User not found with email: " + email));
+    }
+
+    @Override
+    public User getUserByToken(int id)
+    {
+        return userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("User not found with id: " + id));
     }
 
     /**Register New Users **/

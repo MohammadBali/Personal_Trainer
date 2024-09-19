@@ -1,6 +1,8 @@
 package com.bali.personal_trainer.components;
 
 import com.bali.personal_trainer.models.Entities.User;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -83,5 +85,16 @@ public class Components
             } catch (IllegalAccessException e) {return null;}
         }
         return target;
+    }
+
+    /**
+     * Get User ID From Token
+     * @return Returns userID
+     * **/
+    public static int getUserIdFromToken()
+    {
+        // Extract the authenticated user's ID from the token
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return Integer.parseInt(authentication.getName());
     }
 }

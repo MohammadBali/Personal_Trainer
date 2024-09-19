@@ -3,7 +3,6 @@ package com.bali.personal_trainer.controllers;
 import com.bali.personal_trainer.components.Components;
 import com.bali.personal_trainer.models.Entities.User;
 import com.bali.personal_trainer.services.UserService.UserService;
-import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
@@ -11,20 +10,11 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.object.SqlQuery;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.rmi.UnexpectedException;
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("/user")
@@ -134,6 +124,18 @@ public class UserController
         }
     }
 
+    @GetMapping("/getData")
+    public ResponseEntity<?> getByToken()
+    {
+        try
+        {
+            return ResponseEntity.ok(Components.userToBeReturned(userService.getUserByToken(Components.getUserIdFromToken()),null));
+        }
+        catch (Exception e)
+        {
+            return ResponseEntity.status(500).body(Map.of("error","Error while getting user data", "message",e.getMessage()));
+        }
+    }
 
     @PatchMapping("/patch/id")
     public ResponseEntity<?> patchById(@RequestBody User user)
@@ -146,8 +148,7 @@ public class UserController
             }
 
             // Extract the authenticated user's ID from the token
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            int userId = Integer.parseInt(authentication.getName());
+            int userId = Components.getUserIdFromToken();
             user.setId(userId);
 
             return ResponseEntity.ok(Components.userToBeReturned(userService.updateUser(userId, user), null));

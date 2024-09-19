@@ -54,7 +54,7 @@ public class ItemController
     {
         try
         {
-            return ResponseEntity.ok(itemService.findAll());
+            return ResponseEntity.ok(Map.of("items",itemService.findAll()));
         }
         catch (Exception e)
         {

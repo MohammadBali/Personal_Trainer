@@ -1,16 +1,13 @@
 package com.bali.personal_trainer.models.Entities;
 
-import com.bali.personal_trainer.models.ManyToMany.ItemTransaction;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
 
 @Table(name = "item")
 @Entity
@@ -38,10 +35,6 @@ public class Item {
     @NotNull(message = "unitType cannot be nullable")
     private Type unitType;
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference("items_transactions")
-    @JsonIgnore
-    private Collection<ItemTransaction> itemTransactions = new ArrayList<>();
 
     public int getId() {
         return id;
@@ -83,14 +76,6 @@ public class Item {
         this.unitType = unitType;
     }
 
-    public Collection<ItemTransaction> getItemTransactions() {
-        return itemTransactions;
-    }
-
-    public void setItemTransactions(Collection<ItemTransaction> itemTransactions) {
-        this.itemTransactions = itemTransactions;
-    }
-
     @Override
     public String toString() {
         return "Item{" +
@@ -99,7 +84,6 @@ public class Item {
                 ", price=" + price +
                 ", categoryId=" + categoryId +
                 ", unitType=" + unitType +
-                ", itemTransactions=" + itemTransactions +
                 '}';
     }
 }

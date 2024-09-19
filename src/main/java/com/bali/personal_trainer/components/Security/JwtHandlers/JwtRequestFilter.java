@@ -48,7 +48,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null)
             {
-                UserDetails userDetails = (UserDetails) userService.get(Integer.parseInt(userId));
+                UserDetails userDetails = userService.getUser(Integer.parseInt(userId));
                 if (jwtUtility.validateToken(jwt, userId))
                 {
                     // Extract role from the JWT

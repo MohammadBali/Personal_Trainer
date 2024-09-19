@@ -1,5 +1,6 @@
 package com.bali.personal_trainer.services.ItemService;
 
+import com.bali.personal_trainer.models.Entities.Category;
 import com.bali.personal_trainer.models.Entities.Item;
 import com.bali.personal_trainer.repositories.ItemRepository;
 import com.bali.personal_trainer.services.CategoryService.CategoryService;
@@ -19,8 +20,13 @@ public class ItemServiceImp implements ItemService
     private CategoryService categoryService;
 
     @Override
-    public Item findById(int id) {
-        return itemRepository.findById(id).orElseThrow(()->new NoSuchElementException("Item not found with id: " + id));
+    public Item findById(int id)
+    {
+        Item item = itemRepository.findById(id).orElseThrow(()->new NoSuchElementException("Item not found with id: " + id));
+
+        //Todo: cannot return the unitType or category?
+        //System.out.println(item.toString());
+        return item;
     }
 
     @Override
@@ -53,8 +59,10 @@ public class ItemServiceImp implements ItemService
     @Override
     public Object addItem(Item item)
     {
-        System.out.println(item.toString());
-        //Category category = categoryService.findById(item.getCategoryId().getId());
+        Category category = categoryService.findById(item.getCategoryId().getId());
+
+        item.setCategoryId(category);
+
         return itemRepository.save(item);
     }
 }

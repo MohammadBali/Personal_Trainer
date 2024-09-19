@@ -3,8 +3,11 @@ package com.bali.personal_trainer.models.ManyToMany;
 import com.bali.personal_trainer.models.Entities.Item;
 import com.bali.personal_trainer.models.Entities.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 @Entity
@@ -30,6 +33,10 @@ public class UserItem {
 
     @Column(name = "date")
     private Date date;
+
+    @OneToMany(mappedBy = "userItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference("userItems_itemTransactions")
+    private Collection<ItemTransaction> itemTransactions = new ArrayList<>();
 
     public int getId() {
         return id;

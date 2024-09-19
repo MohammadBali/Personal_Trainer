@@ -24,10 +24,14 @@ public class ItemTransaction {
     @JsonBackReference("items_transactions")
     private Item item;
 
+    @ManyToOne
+    @JoinColumn(name="userItemID", nullable = false)
+    @JsonBackReference("userItems_itemTransactions")
+    private UserItem userItem;
+
     @Column(name = "totalUnitPrice")
     private double totalUnitPrice;
 
-    // Additional attributes as needed, e.g., quantity
     @Column(name = "quantity")
     private double quantity;
 
@@ -47,14 +51,6 @@ public class ItemTransaction {
         this.transaction = transaction;
     }
 
-    public Item getItem() {
-        return item;
-    }
-
-    public void setItem(Item item) {
-        this.item = item;
-    }
-
     public double getTotalUnitPrice() {
         return totalUnitPrice;
     }
@@ -71,12 +67,29 @@ public class ItemTransaction {
         this.quantity = quantity;
     }
 
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
+
+    public UserItem getUserItem() {
+        return userItem;
+    }
+
+    public void setUserItem(UserItem userItem) {
+        this.userItem = userItem;
+    }
+
     @Override
     public String toString() {
         return "ItemTransaction{" +
                 "id=" + id +
                 ", transaction=" + transaction +
                 ", item=" + item +
+                ", userItem=" + userItem +
                 ", totalUnitPrice=" + totalUnitPrice +
                 ", quantity=" + quantity +
                 '}';

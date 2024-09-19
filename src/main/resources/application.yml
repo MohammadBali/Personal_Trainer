@@ -4,3 +4,4 @@ server:
     include-binding-errors: always
     include-stacktrace: on_param
     include-exception: false
+    include-path: always
