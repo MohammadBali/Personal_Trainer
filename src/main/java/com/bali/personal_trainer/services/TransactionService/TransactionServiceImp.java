@@ -48,40 +48,34 @@ public class TransactionServiceImp implements TransactionService {
     @Transactional(rollbackOn = {Throwable.class})
     public Transaction createTransactionFromDTO(TransactionDTO transaction)
     {
-        try
+        // Find the User by ID
+        User user = userService.getUser(transaction.getUserId());
+
+        if(transaction.getItemTransactions().isEmpty())
         {
-            // Find the User by ID
-            User user = userService.getUser(transaction.getUserId());
-
-            if(transaction.getItemTransactions().isEmpty())
-            {
-                throw new RuntimeException("Transaction must have at least one item");
-            }
-
-            // 1. Create Transaction
-            Transaction t = new Transaction(user, transaction.getTotalPrice(), transaction.isRecurring() ,transaction.getRecurrenceInterval(), transaction.getNextOccurrence());
-            transactionRepository.save(t);
-
-            // 2. Create UserItems
-
-            ArrayList<UserItem> userItemsFromDB = new ArrayList<>();
-
-            for (int i = 0; i < transaction.getItemTransactions().size(); i++)
-            {
-                UserItemTransactionDTO item = transaction.getItemTransactions().get(i);
-                userItemService.add(user.getId(), item.getItemID(), item.getLimit());
-                userItemsFromDB.add(userItemService.findByUserIdAndItemId(user.getId(), item.getItemID()));
-
-                // 3. Create ItemTransactions
-                itemTransactionService.add(new ItemTransaction(t, userItemsFromDB.get(i), item.getQuantity(), new Date()));
-            }
-
-            return transactionRepository.findById(t.getId()).orElseThrow(()-> new RuntimeException("Unexpected error while getting transaction with id: " + t.getId() + " after updating..."));
+            throw new RuntimeException("Transaction must have at least one item");
         }
-        catch (Exception e)
+
+        // 1. Create Transaction
+        Transaction t = new Transaction(user, transaction.getTotalPrice(), transaction.isRecurring() ,transaction.getRecurrenceInterval(), transaction.getNextOccurrence());
+        transactionRepository.save(t);
+
+        // 2. Create UserItems
+
+        ArrayList<UserItem> userItemsFromDB = new ArrayList<>();
+
+        for (int i = 0; i < transaction.getItemTransactions().size(); i++)
         {
-            return null;
+            UserItemTransactionDTO item = transaction.getItemTransactions().get(i);
+            userItemService.add(user.getId(), item.getItemID(), item.getLimit());
+            userItemsFromDB.add(userItemService.findByUserIdAndItemId(user.getId(), item.getItemID()));
+
+            // 3. Create ItemTransactions
+            itemTransactionService.add(new ItemTransaction(t, userItemsFromDB.get(i), item.getQuantity(), new Date()));
         }
+
+        return transactionRepository.findById(t.getId()).orElseThrow(()-> new RuntimeException("Unexpected error while getting transaction with id: " + t.getId() + " after updating..."));
+
     }
 
     @Override
@@ -102,7 +96,7 @@ public class TransactionServiceImp implements TransactionService {
         return transactionRepository.save(transactionToBeUpdated);
     }
 
-    @Override
+    @Override @Transactional
     public String deleteTransaction(int id)
     {
         transactionRepository.deleteById(id);

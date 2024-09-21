@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Named;
 import java.util.Collection;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Named
@@ -15,8 +16,8 @@ public class TokenServiceImp implements TokenService
     TokenRepository tokenRepository;
 
     @Override
-    public Optional<Collection<Token>> findTokenByUserId(int userId) {
-        return tokenRepository.findTokenByUserId(userId);
+    public Collection<Token> findTokenByUserId(int userId) {
+        return tokenRepository.findTokenByUserId(userId).orElseThrow(()->new NoSuchElementException("No Such UserID exists" + userId));
     }
 
     @Override

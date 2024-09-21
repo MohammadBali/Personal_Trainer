@@ -8,6 +8,7 @@ import com.bali.personal_trainer.models.Entities.User;
 import com.bali.personal_trainer.repositories.UserRepository;
 import com.bali.personal_trainer.services.RoleService.RoleService;
 import com.bali.personal_trainer.services.TokenService.TokenService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -64,6 +65,7 @@ public class UserServiceImp implements UserService{
     }
 
     /**Register New Users **/
+    @Transactional(Transactional.TxType.REQUIRED)
     public Object registerUser(User user)
     {
         user.setPassword(passwordEncoder.encode(user.getPassword())); // Hash the password

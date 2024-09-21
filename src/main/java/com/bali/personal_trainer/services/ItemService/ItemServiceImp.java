@@ -61,8 +61,9 @@ public class ItemServiceImp implements ItemService
         return ItemDTO.convertMultipleToDTO(items);
     }
 
+    //Return Type was Object not Item
     @Override
-    public Object addItem(Item item)
+    public Item addItem(Item item)
     {
         Category category = categoryService.findById(item.getCategoryId().getId());
 

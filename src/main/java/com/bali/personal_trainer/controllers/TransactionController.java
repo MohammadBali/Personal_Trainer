@@ -64,7 +64,6 @@ public class TransactionController
         }
     }
 
-
     @GetMapping("/find/id")
     public ResponseEntity<?> findTransactionById(@RequestBody Map<String,Object> body)
     {
@@ -143,7 +142,7 @@ public class TransactionController
         try
         {
             int id = (int) body.get("id");
-            return ResponseEntity.ok(transactionService.deleteTransaction(id));
+            return ResponseEntity.ok(Map.of("message",transactionService.deleteTransaction(id), "status", 1));
         }
         catch (Exception e)
         {

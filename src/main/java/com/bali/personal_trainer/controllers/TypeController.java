@@ -93,10 +93,11 @@ public class TypeController
     @DeleteMapping("/delete/id")
     public ResponseEntity<?> deleteById(@RequestBody Map<String, Object> body)
     {
-        try {
+        try
+        {
             int id = (int) body.get("id");
             typeService.deleteById(id);
-            return ResponseEntity.ok().body(Map.of("message","Type deleted successfully", "status", "1"));
+            return ResponseEntity.ok().body(Map.of("message","Type deleted successfully", "status", 1));
         }
         catch (Exception e)
         {

@@ -39,12 +39,12 @@ CREATE TABLE `item_transaction`
     `userItemID`     int    NOT NULL,
     `date`           date   DEFAULT NULL,
     PRIMARY KEY (`ID`),
-    KEY `item_transaction_transaction_FK` (`transactionID`),
     KEY `item_transaction_user_item_FK` (`userItemID`),
-    CONSTRAINT `item_transaction_transaction_FK` FOREIGN KEY (`transactionID`) REFERENCES `transaction` (`ID`),
+    KEY `item_transaction_transaction_FK` (`transactionID`),
+    CONSTRAINT `item_transaction_transaction_FK` FOREIGN KEY (`transactionID`) REFERENCES `transaction` (`ID`) ON DELETE CASCADE,
     CONSTRAINT `item_transaction_user_item_FK` FOREIGN KEY (`userItemID`) REFERENCES `user_item` (`ID`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 3
+  AUTO_INCREMENT = 38
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 
@@ -132,7 +132,7 @@ CREATE TABLE `token`
     KEY `token_user_FK` (`userID`),
     CONSTRAINT `token_user_FK` FOREIGN KEY (`userID`) REFERENCES `user` (`ID`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 10
+  AUTO_INCREMENT = 11
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 
@@ -145,11 +145,12 @@ CREATE TABLE `transaction`
     `isRecurring`        tinyint(1)   DEFAULT '0',
     `recurrenceInterval` varchar(255) DEFAULT NULL,
     `nextOccurrence`     date         DEFAULT NULL,
+    `createdAt`          date         DEFAULT NULL,
     PRIMARY KEY (`ID`),
     KEY `Transaction_user_FK` (`userID`),
     CONSTRAINT `Transaction_user_FK` FOREIGN KEY (`userID`) REFERENCES `user` (`ID`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 12
+  AUTO_INCREMENT = 39
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 
@@ -195,12 +196,12 @@ CREATE TABLE `user_item`
     `limit`     int  DEFAULT NULL,
     `updatedAt` date DEFAULT NULL,
     PRIMARY KEY (`ID`),
+    UNIQUE KEY `unique_user_item` (`userID`, `itemID`),
     KEY `user_item_item_FK` (`itemID`),
-    KEY `user_item_user_FK` (`userID`),
     CONSTRAINT `user_item_item_FK` FOREIGN KEY (`itemID`) REFERENCES `item` (`ID`),
     CONSTRAINT `user_item_user_FK` FOREIGN KEY (`userID`) REFERENCES `user` (`ID`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 3
+  AUTO_INCREMENT = 44
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
 

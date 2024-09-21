@@ -1,13 +1,28 @@
 package com.bali.personal_trainer.services.TokenService;
 
 import com.bali.personal_trainer.models.Entities.Token;
+import org.springframework.dao.OptimisticLockingFailureException;
 
 import java.util.Collection;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public interface TokenService
 {
-    Optional<Collection<Token>> findTokenByUserId(int userId);
+    /**
+     * Return All Tokens of a User
+     * @param userId User's ID
+     * @throws NoSuchElementException If UserID is wrong
+     * @return Collection of Tokens Object
+     * **/
+    Collection<Token> findTokenByUserId(int userId);
 
+    /**
+     * Add a new Token
+     * @param token Token Object Type
+     * @throws NoSuchElementException if not found
+     * @throws OptimisticLockingFailureException If elements weren't accessible
+     * @return Saved Token Type
+     * **/
     Token save(Token token);
 }

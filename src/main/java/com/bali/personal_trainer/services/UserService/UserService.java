@@ -1,6 +1,7 @@
 package com.bali.personal_trainer.services.UserService;
 
 import com.bali.personal_trainer.models.Entities.User;
+import jakarta.transaction.Transactional;
 import org.springframework.dao.OptimisticLockingFailureException;
 
 import java.util.Collection;
@@ -45,6 +46,7 @@ public interface UserService {
      * @throws IllegalArgumentException, if user is null
      * @throws OptimisticLockingFailureException Otherwise
      * **/
+    @Transactional(Transactional.TxType.REQUIRED)
     Object registerUser(User user);
 
     /**

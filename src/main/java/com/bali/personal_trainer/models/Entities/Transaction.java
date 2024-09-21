@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -51,7 +52,11 @@ public class Transaction
     @Column(name = "nextOccurrence")
     private Date nextOccurrence;
 
-    @OneToMany(mappedBy = "transaction", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @CreationTimestamp
+    @Column(name = "createdAt")
+    private Date createdAt;
+
+    @OneToMany(mappedBy = "transaction", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference("transactions_items")
     private Collection<ItemTransaction> itemTransactions = new ArrayList<>();
 
@@ -111,6 +116,15 @@ public class Transaction
         this.itemTransactions = itemTransactions;
     }
 
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+
     @Override
     public String toString() {
         return "Transaction{" +
@@ -120,6 +134,7 @@ public class Transaction
                 ", isRecurring=" + isRecurring +
                 ", recurrenceInterval='" + recurrenceInterval + '\'' +
                 ", nextOccurrence=" + nextOccurrence +
+                ", createdAt=" + createdAt +
                 ", itemTransactions=" + itemTransactions +
                 '}';
     }

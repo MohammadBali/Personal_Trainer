@@ -23,7 +23,7 @@ public class UserController
     @Autowired
     private UserService userService;
 
-    @Transactional(Transactional.TxType.REQUIRED)
+
     @PostMapping("/signUp")
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult bindingResult)
     {
