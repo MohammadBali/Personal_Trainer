@@ -5,3 +5,11 @@ server:
     include-stacktrace: on_param
     include-exception: false
     include-path: always
+
+  port: 1516
+  ssl:
+    enabled: true
+    keyStoreType: PKCS12
+    key-store: classpath:keystore.p12
+    key-store-password: 123456ss
+    key-alias: alias
