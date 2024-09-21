@@ -1,5 +1,6 @@
 package com.bali.personal_trainer.services.ItemService;
 
+import com.bali.personal_trainer.models.DTO.ItemDTO;
 import com.bali.personal_trainer.models.Entities.Category;
 import com.bali.personal_trainer.models.Entities.Item;
 import com.bali.personal_trainer.repositories.ItemRepository;
@@ -20,40 +21,44 @@ public class ItemServiceImp implements ItemService
     private CategoryService categoryService;
 
     @Override
-    public Item findById(int id)
-    {
+    public ItemDTO findById(int id) throws IllegalAccessException {
         Item item = itemRepository.findById(id).orElseThrow(()->new NoSuchElementException("Item not found with id: " + id));
-
-        //Todo: cannot return the unitType or category?
-        //System.out.println(item.toString());
-        return item;
+        return ItemDTO.convertToDTO(item);
     }
 
     @Override
-    public Item findByName(String name) {
+    public ItemDTO findByName(String name) throws IllegalAccessException{
 
-        return itemRepository.findByName(name).orElseThrow(()->new NoSuchElementException("No Such Item with name" + name));
+        Item item = itemRepository.findByName(name).orElseThrow(()->new NoSuchElementException("No Such Item with name" + name));
+        return ItemDTO.convertToDTO(item);
     }
 
     @Override
-    public Collection<Item> findByCategoryId(int id) {
-        return itemRepository.findByCategoryId(id).orElseThrow(()->new NoSuchElementException("No Such Item with categoryId: " + id));
+    public Collection<ItemDTO> findByCategoryId(int id) throws IllegalAccessException{
+        Collection<Item> items= itemRepository.findByCategoryId(id).orElseThrow(()->new NoSuchElementException("No Such Item with categoryId: " + id));
+
+        return ItemDTO.convertMultipleToDTO(items);
     }
 
     @Override
-    public Collection<Item> findByUnitType(int unitType) {
-        return itemRepository.findByUnitType(unitType).orElseThrow(()->new NoSuchElementException("No Such Item with unitType: " + unitType));
+    public Collection<ItemDTO> findByUnitType(int unitType) throws IllegalAccessException{
+        Collection<Item> items= itemRepository.findByUnitType(unitType).orElseThrow(()->new NoSuchElementException("No Such Item with unitType: " + unitType));
+
+        return ItemDTO.convertMultipleToDTO(items);
     }
 
     @Override
-    public Collection<Item> findByPrice(double price) {
-        return itemRepository.findByPrice(price).orElseThrow(()->new NoSuchElementException("No Such Item with price: " + price));
-    }
-
-    @Override
-    public Collection<Item> findAll()
+    public Collection<ItemDTO> findByPrice(double price) throws IllegalAccessException
     {
-        return itemRepository.findAll();
+        Collection<Item> items= itemRepository.findByPrice(price).orElseThrow(()->new NoSuchElementException("No Such Item with price: " + price));
+        return ItemDTO.convertMultipleToDTO(items);
+    }
+
+    @Override
+    public Collection<ItemDTO> findAll() throws IllegalAccessException
+    {
+        Collection<Item> items= itemRepository.findAll();
+        return ItemDTO.convertMultipleToDTO(items);
     }
 
     @Override

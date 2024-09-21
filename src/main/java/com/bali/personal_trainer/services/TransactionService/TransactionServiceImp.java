@@ -1,17 +1,26 @@
 package com.bali.personal_trainer.services.TransactionService;
 
 import com.bali.personal_trainer.components.Components;
+import com.bali.personal_trainer.models.DTO.UserItemTransactionDTO;
 import com.bali.personal_trainer.models.DTO.TransactionDTO;
 import com.bali.personal_trainer.models.Entities.Transaction;
 import com.bali.personal_trainer.models.Entities.User;
+import com.bali.personal_trainer.models.ManyToMany.ItemTransaction;
+import com.bali.personal_trainer.models.ManyToMany.UserItem;
+import com.bali.personal_trainer.repositories.ItemTransactionRepository;
 import com.bali.personal_trainer.repositories.TransactionRepository;
-import com.bali.personal_trainer.repositories.UserRepository;
+import com.bali.personal_trainer.services.ItemTransactionService.ItemTransactionService;
+import com.bali.personal_trainer.services.UserItem.UserItemService;
+import com.bali.personal_trainer.services.UserService.UserService;
+import io.micrometer.core.instrument.config.validate.ValidationException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Named;
-import java.util.Collection;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.time.LocalDateTime;
+import java.util.*;
+
+import static com.fasterxml.jackson.databind.type.LogicalType.DateTime;
 
 @Named
 public class TransactionServiceImp implements TransactionService {
@@ -20,7 +29,13 @@ public class TransactionServiceImp implements TransactionService {
     private TransactionRepository transactionRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
+
+    @Autowired
+    private UserItemService userItemService;
+
+    @Autowired
+    private ItemTransactionService itemTransactionService;
 
     @Override
     public Transaction createTransaction(Transaction transaction)
@@ -30,20 +45,43 @@ public class TransactionServiceImp implements TransactionService {
     }
 
     @Override
+    @Transactional(rollbackOn = {Throwable.class})
     public Transaction createTransactionFromDTO(TransactionDTO transaction)
     {
-        // Find the User by ID
-        User user = userRepository.findById(transaction.getUserId())
-                .orElseThrow(() -> new NoSuchElementException("User not found with id: " + transaction.getUserId()));
+        try
+        {
+            // Find the User by ID
+            User user = userService.getUser(transaction.getUserId());
 
-        Transaction t = new Transaction();
-        t.setUserId(user);
-        t.setTotalPrice(transaction.getTotalPrice());
-        t.setRecurring(transaction.isRecurring());
-        t.setRecurrenceInterval(transaction.getRecurrenceInterval());
-        t.setNextOccurrence(transaction.getNextOccurrence());
+            if(transaction.getItemTransactions().isEmpty())
+            {
+                throw new RuntimeException("Transaction must have at least one item");
+            }
 
-        return transactionRepository.save(t);
+            // 1. Create Transaction
+            Transaction t = new Transaction(user, transaction.getTotalPrice(), transaction.isRecurring() ,transaction.getRecurrenceInterval(), transaction.getNextOccurrence());
+            transactionRepository.save(t);
+
+            // 2. Create UserItems
+
+            ArrayList<UserItem> userItemsFromDB = new ArrayList<>();
+
+            for (int i = 0; i < transaction.getItemTransactions().size(); i++)
+            {
+                UserItemTransactionDTO item = transaction.getItemTransactions().get(i);
+                userItemService.add(user.getId(), item.getItemID(), item.getLimit());
+                userItemsFromDB.add(userItemService.findByUserIdAndItemId(user.getId(), item.getItemID()));
+
+                // 3. Create ItemTransactions
+                itemTransactionService.add(new ItemTransaction(t, userItemsFromDB.get(i), item.getQuantity(), new Date()));
+            }
+
+            return transactionRepository.findById(t.getId()).orElseThrow(()-> new RuntimeException("Unexpected error while getting transaction with id: " + t.getId() + " after updating..."));
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
     }
 
     @Override

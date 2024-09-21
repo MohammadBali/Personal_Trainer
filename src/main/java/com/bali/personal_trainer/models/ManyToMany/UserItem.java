@@ -5,6 +5,8 @@ import com.bali.personal_trainer.models.Entities.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,13 +28,13 @@ public class UserItem {
     private Item item;
 
     @Column(name = "limit")
+    @ColumnDefault(value = "-1")
     private int limit;
 
-    @Column(name = "amount")
-    private double amount;
-
-    @Column(name = "date")
-    private Date date;
+    @Column(name = "updatedAt")
+    @Temporal(TemporalType.DATE)
+    @UpdateTimestamp
+    private Date updatedAt;
 
     @OneToMany(mappedBy = "userItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference("userItems_itemTransactions")
@@ -70,20 +72,12 @@ public class UserItem {
         this.limit = limit;
     }
 
-    public double getAmount() {
-        return amount;
+    public Date getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
+    public void setUpdatedAt(Date date) {
+        this.updatedAt = date;
     }
 
     @Override
@@ -93,8 +87,7 @@ public class UserItem {
                 ", user=" + user +
                 ", item=" + item +
                 ", limit=" + limit +
-                ", amount=" + amount +
-                ", date=" + date +
+                ", date=" + updatedAt +
                 '}';
     }
 }

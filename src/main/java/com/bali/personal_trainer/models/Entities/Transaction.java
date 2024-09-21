@@ -14,7 +14,19 @@ import java.util.Collection;
 
 @Table(name = "transaction")
 @Entity
-public class Transaction {
+public class Transaction
+{
+
+    public Transaction(){super();}
+
+    public Transaction(User userId, double totalPrice, boolean isRecurring, String recurrenceInterval, Date nextOccurrence)
+    {
+        this.userId = userId;
+        this.totalPrice = totalPrice;
+        this.isRecurring = isRecurring;
+        this.recurrenceInterval = recurrenceInterval;
+        this.nextOccurrence = nextOccurrence;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

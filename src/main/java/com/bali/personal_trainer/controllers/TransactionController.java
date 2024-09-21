@@ -4,6 +4,7 @@ import com.bali.personal_trainer.components.Components;
 import com.bali.personal_trainer.models.DTO.TransactionDTO;
 import com.bali.personal_trainer.models.Entities.Transaction;
 import com.bali.personal_trainer.services.TransactionService.TransactionService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class TransactionController
 
         catch (Throwable e)
         {
-            return ResponseEntity.status(500).body(Map.of("error","Error while adding new transaction","message",e.getMessage()));
+            return ResponseEntity.status(500).body(Map.of("error","Error while adding new transaction","message",e.getMessage()!=null? e.getMessage() : ""));
         }
     }
 

@@ -1,5 +1,6 @@
 package com.bali.personal_trainer.services.ItemService;
 
+import com.bali.personal_trainer.models.DTO.ItemDTO;
 import com.bali.personal_trainer.models.Entities.Item;
 
 import java.util.Collection;
@@ -9,15 +10,15 @@ public interface ItemService
 {
     Object addItem(Item item);
 
-    Item findById(int id);
+    ItemDTO findById(int id) throws IllegalAccessException;
 
-    Item findByName(String name);
+    ItemDTO findByName(String name) throws IllegalAccessException;
 
-    Collection<Item> findByCategoryId(int id);
+    Collection<ItemDTO> findByCategoryId(int id) throws IllegalAccessException;
 
-    Collection<Item> findByUnitType(int unitType);
+    Collection<ItemDTO> findByUnitType(int unitType) throws IllegalAccessException;
 
-    Collection<Item> findByPrice(double price);
+    Collection<ItemDTO> findByPrice(double price) throws IllegalAccessException;
 
-    Collection<Item> findAll();
+    Collection<ItemDTO> findAll() throws IllegalAccessException;
 }

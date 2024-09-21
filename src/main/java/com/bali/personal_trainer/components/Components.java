@@ -1,5 +1,7 @@
 package com.bali.personal_trainer.components;
 
+import com.bali.personal_trainer.models.DTO.ItemDTO;
+import com.bali.personal_trainer.models.Entities.Item;
 import com.bali.personal_trainer.models.Entities.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -97,4 +99,5 @@ public class Components
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return Integer.parseInt(authentication.getName());
     }
+
 }

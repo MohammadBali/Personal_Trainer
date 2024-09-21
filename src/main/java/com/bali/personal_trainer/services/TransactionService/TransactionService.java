@@ -2,6 +2,7 @@ package com.bali.personal_trainer.services.TransactionService;
 
 import com.bali.personal_trainer.models.DTO.TransactionDTO;
 import com.bali.personal_trainer.models.Entities.Transaction;
+import jakarta.transaction.Transactional;
 import org.springframework.dao.OptimisticLockingFailureException;
 
 import java.util.Collection;
@@ -20,6 +21,7 @@ public interface TransactionService
      * @throws IllegalArgumentException If transaction was null
      * @throws OptimisticLockingFailureException otherwise
      * **/
+    @Transactional
     Transaction createTransactionFromDTO(TransactionDTO transaction);
 
     /**

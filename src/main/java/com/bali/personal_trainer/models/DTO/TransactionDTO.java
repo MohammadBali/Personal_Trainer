@@ -1,9 +1,8 @@
 package com.bali.personal_trainer.models.DTO;
-
-import com.bali.personal_trainer.models.ManyToMany.ItemTransaction;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.ColumnDefault;
-
 import java.sql.Date;
 import java.util.List;
 
@@ -11,13 +10,19 @@ public class TransactionDTO
 {
     @Min(value = 1, message = "userId should be greater than 0")
     private int userId;
-    @Min(value = 0, message = "totalPrice should be at least 0")
+
+    @ColumnDefault(value = "0")
     private double totalPrice;
+
     @ColumnDefault("FALSE")
     private boolean isRecurring;
+
     private String recurrenceInterval;
+
     private Date nextOccurrence;
-    private List<ItemTransaction> itemTransactions;
+
+    @Valid @NotNull(message = "itemTransactions field shouldn't be null")
+    private List<UserItemTransactionDTO> itemTransactions;
 
     public int getUserId() {
         return userId;
@@ -59,11 +64,11 @@ public class TransactionDTO
         this.nextOccurrence = nextOccurrence;
     }
 
-    public List<ItemTransaction> getItemTransactions() {
+    public List<UserItemTransactionDTO> getItemTransactions() {
         return itemTransactions;
     }
 
-    public void setItemTransactions(List<ItemTransaction> itemTransactions) {
+    public void setItemTransactions(List<UserItemTransactionDTO> itemTransactions) {
         this.itemTransactions = itemTransactions;
     }
 

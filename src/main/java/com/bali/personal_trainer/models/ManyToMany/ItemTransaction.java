@@ -1,14 +1,24 @@
 package com.bali.personal_trainer.models.ManyToMany;
 
-import com.bali.personal_trainer.models.Entities.Item;
 import com.bali.personal_trainer.models.Entities.Transaction;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "item_transaction")
-public class ItemTransaction {
+public class ItemTransaction
+{
+    public ItemTransaction(){super();}
 
+    public ItemTransaction(Transaction transaction, UserItem userItem,  double quantity, Date date) {
+        this.transaction = transaction;
+        this.userItem = userItem;
+        this.totalUnitPrice = 0;
+        this.quantity = quantity;
+        this.date = date;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
@@ -20,11 +30,6 @@ public class ItemTransaction {
     private Transaction transaction;
 
     @ManyToOne
-    @JoinColumn(name = "itemID", nullable = false)
-    @JsonBackReference("items_transactions")
-    private Item item;
-
-    @ManyToOne
     @JoinColumn(name="userItemID", nullable = false)
     @JsonBackReference("userItems_itemTransactions")
     private UserItem userItem;
@@ -34,6 +39,10 @@ public class ItemTransaction {
 
     @Column(name = "quantity")
     private double quantity;
+
+    @Column(name="date")
+    @Temporal(TemporalType.DATE)
+    private Date date;
 
     public int getId() {
         return id;
@@ -67,14 +76,6 @@ public class ItemTransaction {
         this.quantity = quantity;
     }
 
-    public Item getItem() {
-        return item;
-    }
-
-    public void setItem(Item item) {
-        this.item = item;
-    }
-
     public UserItem getUserItem() {
         return userItem;
     }
@@ -88,7 +89,6 @@ public class ItemTransaction {
         return "ItemTransaction{" +
                 "id=" + id +
                 ", transaction=" + transaction +
-                ", item=" + item +
                 ", userItem=" + userItem +
                 ", totalUnitPrice=" + totalUnitPrice +
                 ", quantity=" + quantity +
