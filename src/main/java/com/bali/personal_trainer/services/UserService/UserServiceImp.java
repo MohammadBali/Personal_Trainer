@@ -59,9 +59,9 @@ public class UserServiceImp implements UserService{
     }
 
     @Override
-    public User getUserByToken(int id)
+    public User getUserByToken(int id, String token)
     {
-        return userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("User not found with id: " + id));
+        return userRepository.findByTokenAndUserId(token,id).orElseThrow(() -> new NoSuchElementException("User not found with id: " + id));
     }
 
     /**Register New Users **/
@@ -125,8 +125,13 @@ public class UserServiceImp implements UserService{
         return userRepository.save(updatedUser);
     }
 
+    @Override
+    public String signOut(int userId, String token)
+    {
+        return tokenService.removeTokenByTokenAndUserId(token,userId);
+    }
 
-//    /**Generate a Token for User **/
+    //    /**Generate a Token for User **/
 //    public String generateUserToken(User user)
 //    {
 //        return jwtUtility.generateToken(user);

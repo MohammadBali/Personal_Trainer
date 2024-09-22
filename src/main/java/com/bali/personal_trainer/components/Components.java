@@ -3,6 +3,7 @@ package com.bali.personal_trainer.components;
 import com.bali.personal_trainer.models.DTO.ItemDTO;
 import com.bali.personal_trainer.models.Entities.Item;
 import com.bali.personal_trainer.models.Entities.User;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -100,4 +101,26 @@ public class Components
         return Integer.parseInt(authentication.getName());
     }
 
+
+    /**
+     * Extract Token From Request
+     * @param request HttpServletRequest
+     * @return Token or Null
+     * **/
+    public static String extractToken(HttpServletRequest request)
+    {
+        final String authorizationHeader = request.getHeader("Authorization");
+        try
+        {
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer "))
+            {
+                return authorizationHeader.substring(7);
+            }
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+        return null;
+    }
 }

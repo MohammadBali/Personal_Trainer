@@ -24,4 +24,16 @@ public class TokenServiceImp implements TokenService
     public Token save(Token token) {
         return tokenRepository.save(token);
     }
+
+    @Override
+    public String removeTokenByTokenAndUserId(String token, int userId) {
+        try {
+            tokenRepository.deleteByTokenAndUserId(token, userId);
+            return "Deleted Successfully";
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("Error while removing token" + e.getMessage());
+        }
+    }
 }

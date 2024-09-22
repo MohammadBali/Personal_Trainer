@@ -1,11 +1,8 @@
 package com.bali.personal_trainer.services.TokenService;
-
 import com.bali.personal_trainer.models.Entities.Token;
 import org.springframework.dao.OptimisticLockingFailureException;
-
 import java.util.Collection;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 public interface TokenService
 {
@@ -25,4 +22,14 @@ public interface TokenService
      * @return Saved Token Type
      * **/
     Token save(Token token);
+
+    /**
+     * Removes a Token by Token Name ~ Not ID
+     * @param token Token Value
+     * @param userID UserID
+     * @return String
+     * @throws RuntimeException if some exception
+     */
+    String removeTokenByTokenAndUserId(String token, int userID);
+
 }

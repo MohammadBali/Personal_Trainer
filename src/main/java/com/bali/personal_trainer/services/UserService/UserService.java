@@ -33,11 +33,12 @@ public interface UserService {
 
     /**
      * Return user data by token
-     * @param id The Extracted ID from Token
+     * @param id The UserID
+     * @param token Token value
      * @return User Object
      * @throws NoSuchElementException if not found
      * **/
-    User getUserByToken(int id);
+    User getUserByToken(int id, String token);
 
     /**
      * Add a new User
@@ -68,5 +69,12 @@ public interface UserService {
      * **/
     User updateUser(int id, User user);
 
+    /**
+     * Sign a User out and delete his token
+     * @param token token
+     * @param userId UserId
+     * @return String of completion
+     * **/
+    String signOut(int userId, String token);
 
 }

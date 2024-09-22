@@ -1,8 +1,10 @@
 package com.bali.personal_trainer.controllers;
 
 import com.bali.personal_trainer.components.Components;
+import com.bali.personal_trainer.components.Security.JwtHandlers.JwtUtility;
 import com.bali.personal_trainer.models.Entities.User;
 import com.bali.personal_trainer.services.UserService.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
@@ -11,6 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
@@ -23,6 +31,8 @@ public class UserController
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private JwtUtility jwtUtility;
 
     @PostMapping("/signUp")
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult bindingResult)
@@ -125,11 +135,14 @@ public class UserController
     }
 
     @GetMapping("/getData")
-    public ResponseEntity<?> getByToken()
+    public ResponseEntity<?> getByToken(HttpServletRequest request)
     {
         try
         {
-            return ResponseEntity.ok(Components.userToBeReturned(userService.getUserByToken(Components.getUserIdFromToken()),null));
+            String token = Components.extractToken(request);
+            int userId = Components.getUserIdFromToken();
+
+            return ResponseEntity.ok(Components.userToBeReturned(userService.getUserByToken(userId, token),null));
         }
         catch (Exception e)
         {
@@ -156,6 +169,22 @@ public class UserController
         catch (Exception e)
         {
             return ResponseEntity.status(500).body(Map.of("error","Error while patching user", "message",e.getMessage()));
+        }
+    }
+
+    @PostMapping("/signOut")
+    public ResponseEntity<?> signOut(HttpServletRequest request)
+    {
+        try
+        {
+            String token = Components.extractToken(request);
+            int userId = Components.getUserIdFromToken();
+
+            return ResponseEntity.ok(Map.of("Message",userService.signOut(userId,token), "Removed Token" ,token!=null? token : ""));
+        }
+        catch (Exception e)
+        {
+            return ResponseEntity.status(500).body(Map.of("error","Error while signing out", "message",e.getMessage()));
         }
     }
 }
