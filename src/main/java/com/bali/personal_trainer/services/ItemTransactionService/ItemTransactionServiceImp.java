@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 import javax.inject.Named;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -49,17 +50,34 @@ public class ItemTransactionServiceImp implements ItemTransactionService{
     }
 
     @Override
-    public Collection<ItemTransaction> findMostBoughtItemInHighestTransactionThisMonth(int userId, LocalDate startOfMonth, LocalDate endOfMonth)
+    public ItemTransaction findMostBoughtItemThisMonth(int userId)
     {
+        // Get the first and last day of the current month
+        YearMonth currentMonth = YearMonth.now();
+        LocalDate startOfMonth = currentMonth.atDay(1);
+        LocalDate endOfMonth = currentMonth.atEndOfMonth();
 
-        return itemTransactionRepository.findMostBoughtItemInHighestTransactionThisMonth(userId, startOfMonth, endOfMonth).orElseThrow(
-                ()-> new NoSuchElementException("No Such Transaction was found")
+        Collection<ItemTransaction> items = itemTransactionRepository.findMostBoughtItemInHighestTransactionThisMonth(userId, startOfMonth, endOfMonth).get();
+
+        return items.isEmpty()? null : items.stream().toList().get(0);
+    }
+
+    @Override
+    public Collection<ItemTransaction> searchByCategory(int userId, int category) {
+        return itemTransactionRepository.searchByCategory(userId,category).orElseThrow(
+                ()-> new NoSuchElementException("Couldn't Search by category " + category + " For userID: " + userId)
         );
     }
 
     @Override
-    public Collection<ItemTransaction> findItemsOfDate(int userId, LocalDate date) {
+    public Collection<ItemTransaction> findItemsOfDate(int userId, LocalDate date)
+    {
+        if(date==null)
+        {
+            date=LocalDate.now();
+        }
+
         return itemTransactionRepository.findItemsOfDate(userId,date).orElseThrow(
-                ()-> new NoSuchElementException("No Such ItemTransactions were found for this date" + date.toString()));
+                ()-> new NoSuchElementException("No Such ItemTransactions were found for this date"));
     }
 }

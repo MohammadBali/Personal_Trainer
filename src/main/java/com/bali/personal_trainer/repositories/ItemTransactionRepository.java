@@ -5,6 +5,7 @@ import com.bali.personal_trainer.models.ManyToMany.ItemTransaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -30,11 +31,19 @@ public interface ItemTransactionRepository extends JpaRepository<ItemTransaction
             "ORDER BY it.quantity DESC")
     Optional<Collection<ItemTransaction>> findMostBoughtItemInHighestTransactionThisMonth(@Param("userId") int userId, @Param("startOfMonth") LocalDate startOfMonth, @Param("endOfMonth") LocalDate endOfMonth);
 
-
     @Query("SELECT it FROM ItemTransaction it " +
             "JOIN  it.transaction "+
             "WHERE it.transaction.userId.id = :userId " +
             "AND DATE(it.transaction.createdAt) = :date " +
             "ORDER BY it.totalUnitPrice DESC")
     Optional<Collection<ItemTransaction>> findItemsOfDate(@Param("userId") int userId, @Param("date") LocalDate date);
+
+    @Query("SELECT it FROM ItemTransaction it " +
+            "JOIN it.transaction t ON it.transaction.id = t.id " +
+            "JOIN it.userItem ut ON it.userItem.id = ut.id " +
+            "JOIN ut.item item ON ut.item.id = item.id " +
+            "JOIN item.categoryId c ON item.categoryId.id = c.id " +
+            "WHERE c.id =:category AND t.userId.id =:userId " +
+            "ORDER BY it.date DESC")
+    Optional<Collection<ItemTransaction>> searchByCategory(@Param("userId") int userId, @Param("category") int category);
 }

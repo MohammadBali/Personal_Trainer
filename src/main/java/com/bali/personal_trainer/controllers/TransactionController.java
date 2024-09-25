@@ -117,36 +117,6 @@ public class TransactionController
         }
     }
 
-    @GetMapping("/mostBoughtItem/ThisMonth")
-    public ResponseEntity<?> findMostBoughtTransactionThisMonth()
-    {
-        int userId = Components.getUserIdFromToken();
-        try
-        {
-            return ResponseEntity.ok(Map.of("Item",transactionService.findTopTransactionByHighestPriceThisMonth(userId)));
-        }
-        catch (Exception e)
-        {
-            return ResponseEntity.status(500).body(Map.of("error","Error While getting transaction","message",e.getMessage()));
-        }
-    }
-
-    @GetMapping("/itemsOfDate")
-    public ResponseEntity<?> itemsOfToday(@RequestBody Map<String,Object> body)
-    {
-        try
-        {
-            int userId = Components.getUserIdFromToken();
-            LocalDate date = body.get("date")!=null? LocalDate.parse(body.get("date").toString()) : null;
-
-            return ResponseEntity.ok(Map.of("items",transactionService.findItemsOfToday(userId,date)));
-        }
-        catch (Exception e)
-        {
-            return ResponseEntity.status(500).body(Map.of("error","Error While getting items of today","message",e.getMessage()));
-        }
-    }
-
     @GetMapping("/find/userId")
     public ResponseEntity<?> findTransactionsByUserId()
     {

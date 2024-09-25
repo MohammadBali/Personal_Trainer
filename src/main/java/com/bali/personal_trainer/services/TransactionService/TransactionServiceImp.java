@@ -8,6 +8,7 @@ import com.bali.personal_trainer.models.Entities.Transaction;
 import com.bali.personal_trainer.models.Entities.User;
 import com.bali.personal_trainer.models.ManyToMany.ItemTransaction;
 import com.bali.personal_trainer.models.ManyToMany.UserItem;
+import com.bali.personal_trainer.repositories.ItemTransactionRepository;
 import com.bali.personal_trainer.repositories.TransactionRepository;
 import com.bali.personal_trainer.services.ItemTransactionService.ItemTransactionService;
 import com.bali.personal_trainer.services.UserItem.UserItemService;
@@ -16,9 +17,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import javax.inject.Named;
 import java.time.LocalDate;
-import java.time.LocalDate;
-import java.time.Year;
-import java.time.YearMonth;
 import java.util.*;
 
 @Named
@@ -35,6 +33,8 @@ public class TransactionServiceImp implements TransactionService {
 
     @Autowired
     private ItemTransactionService itemTransactionService;
+    @Autowired
+    private ItemTransactionRepository itemTransactionRepository;
 
     @Override
     public Transaction createTransaction(Transaction transaction)
@@ -192,22 +192,4 @@ public class TransactionServiceImp implements TransactionService {
         }
     }
 
-    @Override
-    public ItemTransaction findTopTransactionByHighestPriceThisMonth(int userId)
-    {
-        // Get the first and last day of the current month
-        YearMonth currentMonth = YearMonth.now();
-        LocalDate startOfMonth = currentMonth.atDay(1);
-        LocalDate endOfMonth = currentMonth.atEndOfMonth();
-
-        Collection<ItemTransaction> items = itemTransactionService.findMostBoughtItemInHighestTransactionThisMonth(userId, startOfMonth, endOfMonth);
-
-        return items.isEmpty()? null : items.stream().toList().get(0);
-    }
-
-    @Override
-    public Collection<ItemTransaction> findItemsOfToday(int userId, LocalDate date)
-    {
-        return itemTransactionService.findItemsOfDate(userId, date !=null? date : LocalDate.now());
-    }
 }

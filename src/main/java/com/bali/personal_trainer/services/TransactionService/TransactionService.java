@@ -87,20 +87,5 @@ public interface TransactionService
      * **/
     Collection<Transaction> findByUserId(int id);
 
-    /**
-     * Finds The Most Bought Item for a User This Month
-     * @param userId User ID
-     * @throws NoSuchElementException if Not Found
-     * @return ItemTransaction Object
-     * **/
-    ItemTransaction findTopTransactionByHighestPriceThisMonth(int userId);
-
-    /**
-     * Returns Today's Items for this user
-     * @param userId User ID
-     * @param date Today's Date, 2024-12-29, NULLABLE
-     * @return Collection<ItemTransaction>
-     * **/
-    Collection<ItemTransaction> findItemsOfToday(int userId, LocalDate date);
 
 }
