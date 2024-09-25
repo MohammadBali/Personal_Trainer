@@ -8,8 +8,9 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
-
 import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -27,6 +28,7 @@ public class Transaction
         this.isRecurring = isRecurring;
         this.recurrenceInterval = recurrenceInterval;
         this.nextOccurrence = nextOccurrence;
+        this.createdAt = new Date(System.currentTimeMillis());;
     }
 
     @Id

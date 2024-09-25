@@ -1,13 +1,18 @@
 package com.bali.personal_trainer.services.TransactionService;
 
+import com.bali.personal_trainer.components.Enums.PriceType;
 import com.bali.personal_trainer.models.DTO.TransactionDTO;
 import com.bali.personal_trainer.models.Entities.Transaction;
+import com.bali.personal_trainer.models.ManyToMany.ItemTransaction;
 import jakarta.transaction.Transactional;
 import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 public interface TransactionService
 {
@@ -52,19 +57,21 @@ public interface TransactionService
     /**
      * Find Transactions by TotalPrice Only
      * @param totalPrice The price
+     * @param type Equal, Less, Greater, etc...
      * @return List of Transactions
      * @throws RuntimeException if some error
      * **/
-    List<Transaction> findByTotalPrice(double totalPrice);
+    List<Transaction> findByTotalPrice(double totalPrice, PriceType type);
 
     /**
      * Find Transactions of a user by total price
      * @param userId UserID
      * @param totalPrice TotalPrice to search within
+     * @param type Equal, Less, Greater, etc...
      * @return List<Transaction>
      * @throws NoSuchElementException If some error
      * **/
-    List<Transaction> findByTotalPriceAndUserId(double totalPrice, int userId);
+    List<Transaction> findByTotalPriceAndUserId(double totalPrice, int userId, PriceType type);
 
     /**
      * Find All Transactions
@@ -79,4 +86,21 @@ public interface TransactionService
      * @throws RuntimeException if not found
      * **/
     Collection<Transaction> findByUserId(int id);
+
+    /**
+     * Finds The Most Bought Item for a User This Month
+     * @param userId User ID
+     * @throws NoSuchElementException if Not Found
+     * @return ItemTransaction Object
+     * **/
+    ItemTransaction findTopTransactionByHighestPriceThisMonth(int userId);
+
+    /**
+     * Returns Today's Items for this user
+     * @param userId User ID
+     * @param date Today's Date, 2024-12-29, NULLABLE
+     * @return Collection<ItemTransaction>
+     * **/
+    Collection<ItemTransaction> findItemsOfToday(int userId, LocalDate date);
+
 }

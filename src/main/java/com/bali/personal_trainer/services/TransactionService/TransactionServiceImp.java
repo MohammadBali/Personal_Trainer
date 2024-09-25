@@ -1,26 +1,25 @@
 package com.bali.personal_trainer.services.TransactionService;
 
 import com.bali.personal_trainer.components.Components;
+import com.bali.personal_trainer.components.Enums.PriceType;
 import com.bali.personal_trainer.models.DTO.UserItemTransactionDTO;
 import com.bali.personal_trainer.models.DTO.TransactionDTO;
 import com.bali.personal_trainer.models.Entities.Transaction;
 import com.bali.personal_trainer.models.Entities.User;
 import com.bali.personal_trainer.models.ManyToMany.ItemTransaction;
 import com.bali.personal_trainer.models.ManyToMany.UserItem;
-import com.bali.personal_trainer.repositories.ItemTransactionRepository;
 import com.bali.personal_trainer.repositories.TransactionRepository;
 import com.bali.personal_trainer.services.ItemTransactionService.ItemTransactionService;
 import com.bali.personal_trainer.services.UserItem.UserItemService;
 import com.bali.personal_trainer.services.UserService.UserService;
-import io.micrometer.core.instrument.config.validate.ValidationException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import javax.inject.Named;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalDate;
+import java.time.Year;
+import java.time.YearMonth;
 import java.util.*;
-
-import static com.fasterxml.jackson.databind.type.LogicalType.DateTime;
 
 @Named
 public class TransactionServiceImp implements TransactionService {
@@ -104,9 +103,43 @@ public class TransactionServiceImp implements TransactionService {
     }
 
     @Override
-    public List<Transaction> findByTotalPrice(double totalPrice) {
-        return transactionRepository.findByTotalPrice(totalPrice)
-                .orElseThrow(()-> new RuntimeException("Could not find transaction with such totalPrice" + totalPrice));
+    public List<Transaction> findByTotalPrice(double totalPrice, PriceType type)
+    {
+        switch (type)
+        {
+            case less ->
+            {
+                return transactionRepository.findByTotalPriceLessThan(totalPrice)
+                        .orElseThrow(()-> new RuntimeException("Could not find transaction with such totalPrice" + totalPrice));
+            }
+
+            case lessThanEqual ->
+            {
+                return transactionRepository.findByTotalPriceLessThanEqual(totalPrice)
+                        .orElseThrow(()->new NoSuchElementException("Couldn't find transaction with such totalPrice" + totalPrice));
+            }
+
+            case equals ->
+            {
+                return transactionRepository.findByTotalPrice(totalPrice)
+                        .orElseThrow(()-> new RuntimeException("Could not find transaction with such totalPrice" + totalPrice));
+            }
+
+            case greater ->
+            {
+                return transactionRepository.findByTotalPriceGreaterThan(totalPrice)
+                        .orElseThrow(()-> new RuntimeException("Could not find transaction with such totalPrice" + totalPrice));
+            }
+
+            case greaterThanEqual ->
+            {
+                return transactionRepository.findByTotalPriceGreaterThanEqual(totalPrice)
+                        .orElseThrow(()-> new RuntimeException("Could not find transaction with such totalPrice" + totalPrice));
+            }
+
+            default -> throw new RuntimeException("Unexpected Type value: " + type);
+        }
+
     }
 
     @Override
@@ -121,8 +154,60 @@ public class TransactionServiceImp implements TransactionService {
     }
 
     @Override
-    public List<Transaction> findByTotalPriceAndUserId(double totalPrice, int userId) {
-        return transactionRepository.findAllByTotalPriceAndUserId(totalPrice,userId)
-                .orElseThrow(()->new NoSuchElementException("Couldn't find transaction with such totalPrice" + totalPrice + " and userID" + userId));
+    public List<Transaction> findByTotalPriceAndUserId(double totalPrice, int userId, PriceType type)
+    {
+        switch (type)
+        {
+            case less ->
+            {
+                return transactionRepository.findAllByTotalPriceLessThanAndUserId(totalPrice,userId)
+                    .orElseThrow(()->new NoSuchElementException("Couldn't find transaction with such totalPrice" + totalPrice + " and userID" + userId));
+            }
+
+            case lessThanEqual ->
+            {
+                return transactionRepository.findAllByTotalPriceLessThanEqualAndUserId(totalPrice,userId)
+                        .orElseThrow(()->new NoSuchElementException("Couldn't find transaction with such totalPrice" + totalPrice + " and userID" + userId));
+            }
+
+            case equals ->
+            {
+                return transactionRepository.findAllByTotalPriceAndUserId(totalPrice,userId)
+                        .orElseThrow(()->new NoSuchElementException("Couldn't find transaction with such totalPrice" + totalPrice + " and userID" + userId));
+            }
+
+            case greater ->
+            {
+                return transactionRepository.findAllByTotalPriceGreaterThanAndUserId(totalPrice,userId)
+                        .orElseThrow(()->new NoSuchElementException("Couldn't find transaction with such totalPrice" + totalPrice + " and userID" + userId));
+            }
+
+            case greaterThanEqual ->
+            {
+                return transactionRepository.findAllByTotalPriceGreaterEqualThanAndUserId(totalPrice,userId)
+                        .orElseThrow(()->new NoSuchElementException("Couldn't find transaction with such totalPrice" + totalPrice + " and userID" + userId));
+            }
+
+            default -> throw new RuntimeException("Unexpected Type value: " + type);
+        }
+    }
+
+    @Override
+    public ItemTransaction findTopTransactionByHighestPriceThisMonth(int userId)
+    {
+        // Get the first and last day of the current month
+        YearMonth currentMonth = YearMonth.now();
+        LocalDate startOfMonth = currentMonth.atDay(1);
+        LocalDate endOfMonth = currentMonth.atEndOfMonth();
+
+        Collection<ItemTransaction> items = itemTransactionService.findMostBoughtItemInHighestTransactionThisMonth(userId, startOfMonth, endOfMonth);
+
+        return items.isEmpty()? null : items.stream().toList().get(0);
+    }
+
+    @Override
+    public Collection<ItemTransaction> findItemsOfToday(int userId, LocalDate date)
+    {
+        return itemTransactionService.findItemsOfDate(userId, date !=null? date : LocalDate.now());
     }
 }

@@ -3,8 +3,11 @@ package com.bali.personal_trainer.services.ItemTransactionService;
 import com.bali.personal_trainer.models.ManyToMany.ItemTransaction;
 import com.bali.personal_trainer.repositories.ItemTransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import javax.inject.Named;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -43,5 +46,20 @@ public class ItemTransactionServiceImp implements ItemTransactionService{
     @Override
     public Collection<ItemTransaction> findAll() {
         return itemTransactionRepository.findAll();
+    }
+
+    @Override
+    public Collection<ItemTransaction> findMostBoughtItemInHighestTransactionThisMonth(int userId, LocalDate startOfMonth, LocalDate endOfMonth)
+    {
+
+        return itemTransactionRepository.findMostBoughtItemInHighestTransactionThisMonth(userId, startOfMonth, endOfMonth).orElseThrow(
+                ()-> new NoSuchElementException("No Such Transaction was found")
+        );
+    }
+
+    @Override
+    public Collection<ItemTransaction> findItemsOfDate(int userId, LocalDate date) {
+        return itemTransactionRepository.findItemsOfDate(userId,date).orElseThrow(
+                ()-> new NoSuchElementException("No Such ItemTransactions were found for this date" + date.toString()));
     }
 }

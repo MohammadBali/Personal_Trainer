@@ -8,7 +8,8 @@ import java.util.List;
 
 public class TransactionDTO
 {
-    @Min(value = 1, message = "userId should be greater than 0")
+    //Omitted because we will add it from Token passed.
+    //@Min(value = 1, message = "userId should be greater than 0")
     private int userId;
 
     @ColumnDefault(value = "0")

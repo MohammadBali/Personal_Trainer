@@ -2,6 +2,7 @@ package com.bali.personal_trainer.models.ManyToMany;
 
 import com.bali.personal_trainer.models.Entities.Transaction;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -82,6 +83,20 @@ public class ItemTransaction
 
     public void setUserItem(UserItem userItem) {
         this.userItem = userItem;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+
+    @JsonProperty("itemName") // This makes sure 'itemName' appears in the JSON response
+    public String getItemName() {
+        return this.userItem.getItem().getName();
     }
 
     @Override

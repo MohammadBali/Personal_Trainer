@@ -1,6 +1,7 @@
 package com.bali.personal_trainer.controllers;
 
 import com.bali.personal_trainer.components.Components;
+import com.bali.personal_trainer.components.Enums.PriceType;
 import com.bali.personal_trainer.models.DTO.TransactionDTO;
 import com.bali.personal_trainer.models.Entities.Transaction;
 import com.bali.personal_trainer.services.TransactionService.TransactionService;
@@ -12,6 +13,8 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +40,8 @@ public class TransactionController
 
                 throw new ValidationException(errors.toString());
             }
+
+            transaction.setUserId(Components.getUserIdFromToken());
             return ResponseEntity.ok(transactionService.createTransactionFromDTO(transaction));
         }
 
@@ -84,7 +89,9 @@ public class TransactionController
         try
         {
             double totalPrice = ((Number) body.get("totalPrice")).doubleValue();
-            return ResponseEntity.ok(Map.of("Transactions",transactionService.findByTotalPrice(totalPrice)));
+            PriceType type= PriceType.valueOf((String) body.get("type"));
+
+            return ResponseEntity.ok(Map.of("Transactions",transactionService.findByTotalPrice(totalPrice, type)));
         }
         catch (Exception e)
         {
@@ -98,8 +105,11 @@ public class TransactionController
         try
         {
             double totalPrice = ((Number) body.get("totalPrice")).doubleValue();
-            int userId = (int) body.get("userId");
-            return ResponseEntity.ok(Map.of("Transactions",transactionService.findByTotalPriceAndUserId(totalPrice,userId)));
+            int userId = Components.getUserIdFromToken();
+
+            PriceType type= PriceType.valueOf((String) body.get("type"));
+
+            return ResponseEntity.ok(Map.of("Transactions",transactionService.findByTotalPriceAndUserId(totalPrice,userId, type)));
         }
         catch (Exception e)
         {
@@ -107,12 +117,42 @@ public class TransactionController
         }
     }
 
-    @GetMapping("/find/userId")
-    public ResponseEntity<?> findTransactionsByUserId(@RequestBody Map<String,Object> body)
+    @GetMapping("/mostBoughtItem/ThisMonth")
+    public ResponseEntity<?> findMostBoughtTransactionThisMonth()
+    {
+        int userId = Components.getUserIdFromToken();
+        try
+        {
+            return ResponseEntity.ok(Map.of("Item",transactionService.findTopTransactionByHighestPriceThisMonth(userId)));
+        }
+        catch (Exception e)
+        {
+            return ResponseEntity.status(500).body(Map.of("error","Error While getting transaction","message",e.getMessage()));
+        }
+    }
+
+    @GetMapping("/itemsOfDate")
+    public ResponseEntity<?> itemsOfToday(@RequestBody Map<String,Object> body)
     {
         try
         {
-            int userId = (int) body.get("userId");
+            int userId = Components.getUserIdFromToken();
+            LocalDate date = body.get("date")!=null? LocalDate.parse(body.get("date").toString()) : null;
+
+            return ResponseEntity.ok(Map.of("items",transactionService.findItemsOfToday(userId,date)));
+        }
+        catch (Exception e)
+        {
+            return ResponseEntity.status(500).body(Map.of("error","Error While getting items of today","message",e.getMessage()));
+        }
+    }
+
+    @GetMapping("/find/userId")
+    public ResponseEntity<?> findTransactionsByUserId()
+    {
+        try
+        {
+            int userId = Components.getUserIdFromToken();
             return ResponseEntity.ok(Map.of("Transactions",transactionService.findByUserId(userId)));
         }
         catch (Exception e)
